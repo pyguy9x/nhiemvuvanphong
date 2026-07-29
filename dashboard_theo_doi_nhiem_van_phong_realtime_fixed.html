@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Theo Dõi Nhiệm Vụ Văn Phòng</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --primary: #3157d5;
+      --primary2: #6e8efb;
+      --green: #16a36a;
+      --amber: #f59e0b;
+      --red: #e5484d;
+      --cyan: #12a8b4;
+      --border: #e5eaf2;
+      --shadow: 0 10px 30px rgba(31, 50, 95, .08);
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    section,
+    [id] {
+      scroll-margin-top: 18px
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text)
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 245px 1fr;
+      min-height: 100vh
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, #172554, #1e3a8a);
+      color: #fff;
+      padding: 24px 18px;
+      position: sticky;
+      top: 0;
+      height: 100vh
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #7dd3fc, #fff);
+      display: grid;
+      place-items: center;
+      color: #1e3a8a;
+      font-weight: 900
+    }
+
+    .brand h1 {
+      font-size: 16px;
+      margin: 0;
+      line-height: 1.3
+    }
+
+    .brand small {
+      opacity: .7
+    }
+
+    .nav-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      opacity: .55;
+      margin: 18px 8px 10px
+    }
+
+    .nav-item {
+      padding: 11px 12px;
+      border-radius: 10px;
+      margin: 5px 0;
+      font-size: 14px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      cursor: pointer;
+      transition: .2s;
+      text-decoration: none;
+      color: inherit
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, .09);
+      transform: translateX(2px)
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, .14)
+    }
+
+    .side-note {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 20px;
+      background: rgba(255, 255, 255, .1);
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 14px;
+      padding: 13px;
+      font-size: 12px;
+      line-height: 1.5
+    }
+
+    .main {
+      padding: 26px;
+      min-width: 0
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px
+    }
+
+    .title h2 {
+      margin: 0 0 6px;
+      font-size: 26px
+    }
+
+    .title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    button,
+    .btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      padding: 10px 13px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer
+    }
+
+    button:hover {
+      border-color: #b9c4df
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff
+    }
+
+    .filters {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 2fr repeat(4, 1fr);
+      gap: 10px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 11px;
+      background: #fff;
+      color: var(--text);
+      outline: none
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #7c93e8;
+      box-shadow: 0 0 0 3px rgba(49, 87, 213, .1)
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 18px
+    }
+
+    .kpi {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 17px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden
+    }
+
+    .kpi:after {
+      content: "";
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      right: -25px;
+      top: -25px;
+      background: var(--accent);
+      opacity: .1
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em
+    }
+
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 800;
+      margin: 8px 0 3px
+    }
+
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 16px;
+      margin-bottom: 18px
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 17px;
+      box-shadow: var(--shadow);
+      min-width: 0
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px
+    }
+
+    .card h3 {
+      font-size: 15px;
+      margin: 0
+    }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      color: var(--muted)
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 4px
+    }
+
+    .chart {
+      width: 100%;
+      height: 285px;
+      display: block
+    }
+
+    .progress-list {
+      display: flex;
+      flex-direction: column;
+      gap: 13px
+    }
+
+    .person-row {
+      display: grid;
+      grid-template-columns: 130px 1fr 44px;
+      gap: 10px;
+      align-items: center;
+      font-size: 12px
+    }
+
+    .person-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 650
+    }
+
+    .track {
+      height: 9px;
+      border-radius: 99px;
+      background: #edf1f7;
+      overflow: hidden
+    }
+
+    .fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--primary), var(--primary2))
+    }
+
+    .table-card {
+      padding: 0;
+      overflow: hidden
+    }
+
+    .table-toolbar {
+      padding: 16px 17px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px
+    }
+
+    .table-wrap {
+      overflow: auto;
+      max-height: 590px
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1050px
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #f8faff;
+      color: #475467;
+      text-align: left;
+      padding: 11px 12px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      border-bottom: 1px solid var(--border)
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #eef1f6;
+      font-size: 12px;
+      vertical-align: top
+    }
+
+    tr:hover td {
+      background: #fbfcff
+    }
+
+    .task-cell {
+      min-width: 330px;
+      line-height: 1.45
+    }
+
+    .owner {
+      font-weight: 700
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 8px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap
+    }
+
+    .badge-green {
+      background: #e8f7f0;
+      color: #087c4d
+    }
+
+    .badge-blue {
+      background: #eaf0ff;
+      color: #3157d5
+    }
+
+    .badge-red {
+      background: #feecec;
+      color: #c62f35
+    }
+
+    .badge-amber {
+      background: #fff4dc;
+      color: #a96900
+    }
+
+    .badge-gray {
+      background: #eef1f5;
+      color: #596273
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 17px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .page-btns {
+      display: flex;
+      gap: 6px
+    }
+
+    .page-btns button {
+      padding: 7px 10px
+    }
+
+    .empty {
+      padding: 50px;
+      text-align: center;
+      color: var(--muted)
+    }
+
+    .sync-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px
+    }
+
+    .sync-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #98a2b3
+    }
+
+    .sync-dot.loading {
+      background: #f59e0b;
+      animation: pulse 1s infinite
+    }
+
+    .sync-dot.ok {
+      background: #16a36a
+    }
+
+    .sync-dot.error {
+      background: #e5484d
+    }
+
+    @keyframes pulse {
+      50% {
+        opacity: .35
+      }
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 11px;
+      text-align: right;
+      margin-top: 12px
+    }
+
+    @media(max-width:1100px) {
+      .shell {
+        grid-template-columns: 1fr
+      }
+
+      .sidebar {
+        display: none
+      }
+
+      .filters {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .kpis {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .grid {
+        grid-template-columns: 1fr
+      }
+    }
+
+    @media(max-width:650px) {
+      .main {
+        padding: 14px
+      }
+
+      .topbar {
+        flex-direction: column
+      }
+
+      .filters {
+        grid-template-columns: 1fr
+      }
+
+      .kpis {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .title h2 {
+        font-size: 21px
+      }
+    }
+
+    @media print {
+
+      .sidebar,
+      .filters,
+      .actions,
+      .pagination {
+        display: none !important
+      }
+
+      .shell {
+        display: block
+      }
+
+      .main {
+        padding: 0
+      }
+
+      .card,
+      .kpi {
+        box-shadow: none
+      }
+
+      .table-wrap {
+        max-height: none;
+        overflow: visible
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">VP</div>
+        <div>
+          <h1>Văn phòng số</h1><small>Quản trị nhiệm vụ</small>
+        </div>
+      </div>
+      <div class="nav-title">Tổng quan</div>
+      <a class="nav-item active" href="#dashboard" data-target="dashboard">◉ Dashboard tiến độ</a>
+      <a class="nav-item" href="#task-list" data-target="task-list">▣ Danh sách nhiệm vụ</a>
+      <a class="nav-item" href="#performance" data-target="performance">◎ Hiệu suất cán bộ</a>
+      <div class="nav-title">Báo cáo</div>
+      <a class="nav-item" href="#status-section" data-target="status-section">◫ Trạng thái xử lý</a>
+      <a class="nav-item" href="#task-list" data-target="task-list">◷ Thời hạn thực hiện</a>
+      <div class="side-note"><b>Dữ liệu hiện tại</b><br><span id="sideOwnerCount">0</span> cán bộ · <span
+          id="sideTaskCount">0</span> nhiệm vụ<br><span style="opacity:.7">Nguồn: THEO DÕI NHIỆM VỤ VĂN PHÒNG</span>
+      </div>
+    </aside>
+    <main class="main" id="dashboard">
+      <div class="topbar">
+        <div class="title">
+          <h2>Dashboard theo dõi tiến độ</h2>
+          <p>Theo dõi hiệu quả xử lý nhiệm vụ toàn Văn phòng</p>
+          <div class="sync-status"><span id="syncDot" class="sync-dot"></span><span id="syncText">Đang chờ đồng
+              bộ...</span></div>
+        </div>
+        <div class="actions"><button id="refreshBtn" onclick="loadData(true)">↻ Cập nhật ngay</button><button
+            onclick="window.print()">In báo cáo</button><button class="btn-primary" onclick="exportCSV()">Xuất
+            CSV</button></div>
+      </div>
+
+      <section class="filters">
+        <input id="search" placeholder="Tìm nội dung nhiệm vụ, sản phẩm...">
+        <select id="owner">
+          <option value="">Tất cả cán bộ</option>
+        </select>
+        <select id="status">
+          <option value="">Tất cả trạng thái</option>
+        </select>
+        <select id="role">
+          <option value="">Tất cả vai trò</option>
+        </select>
+        <select id="emergent">
+          <option value="">Tất cả nhiệm vụ</option>
+          <option value="true">Nhiệm vụ phát sinh</option>
+          <option value="false">Nhiệm vụ kế hoạch</option>
+        </select>
+      </section>
+
+      <section class="kpis">
+        <div class="kpi" style="--accent:#3157d5">
+          <div class="kpi-label">Tổng nhiệm vụ</div>
+          <div class="kpi-value" id="kTotal">0</div>
+          <div class="kpi-sub">Trong phạm vi bộ lọc</div>
+        </div>
+        <div class="kpi" style="--accent:#16a36a">
+          <div class="kpi-label">Đã hoàn thành</div>
+          <div class="kpi-value" id="kDone">0</div>
+          <div class="kpi-sub" id="kRate">0% tỷ lệ hoàn thành</div>
+        </div>
+        <div class="kpi" style="--accent:#12a8b4">
+          <div class="kpi-label">Đang triển khai</div>
+          <div class="kpi-value" id="kDoing">0</div>
+          <div class="kpi-sub">Cần tiếp tục theo dõi</div>
+        </div>
+        <div class="kpi" style="--accent:#e5484d">
+          <div class="kpi-label">Quá hạn</div>
+          <div class="kpi-value" id="kLate">0</div>
+          <div class="kpi-sub">Cần ưu tiên xử lý</div>
+        </div>
+        <div class="kpi" style="--accent:#f59e0b">
+          <div class="kpi-label">Nhiệm vụ phát sinh</div>
+          <div class="kpi-value" id="kEmergent">0</div>
+          <div class="kpi-sub">Ngoài kế hoạch ban đầu</div>
+        </div>
+      </section>
+
+      <section class="grid" id="status-section">
+        <div class="card">
+          <div class="card-head">
+            <h3>Phân bổ trạng thái nhiệm vụ</h3>
+            <div class="legend">
+              <span><i class="dot" style="background:#16a36a"></i>Trước hạn</span>
+              <span><i class="dot" style="background:#3157d5"></i>Đúng hạn</span>
+              <span><i class="dot" style="background:#12a8b4"></i>Đang triển khai</span>
+              <span><i class="dot" style="background:#e5484d"></i>Quá hạn</span>
+            </div>
+          </div>
+          <canvas id="statusChart" class="chart"></canvas>
+        </div>
+        <div class="card" id="performance">
+          <div class="card-head">
+            <h3>Tỷ lệ hoàn thành theo cán bộ</h3><span class="muted" style="font-size:11px">Hoàn thành / tổng nhiệm
+              vụ</span>
+          </div>
+          <div id="personProgress" class="progress-list"></div>
+        </div>
+      </section>
+
+      <section class="card table-card" id="task-list">
+        <div class="table-toolbar">
+          <div>
+            <h3>Chi tiết nhiệm vụ</h3><span class="muted" id="resultCount">0 kết quả</span>
+          </div><select id="pageSize" style="width:120px">
+            <option value="10">10 dòng</option>
+            <option value="20" selected>20 dòng</option>
+            <option value="50">50 dòng</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Cán bộ</th>
+                <th>Nhiệm vụ cụ thể</th>
+                <th>Vai trò</th>
+                <th>Hạn hoàn thành</th>
+                <th>Ngày hoàn thành</th>
+                <th>Trạng thái</th>
+                <th>Phát sinh</th>
+              </tr>
+            </thead>
+            <tbody id="taskBody"></tbody>
+          </table>
+          <div id="empty" class="empty" style="display:none">Không tìm thấy nhiệm vụ phù hợp.</div>
+        </div>
+        <div class="pagination"><span id="pageInfo"></span>
+          <div class="page-btns"><button id="prevBtn">← Trước</button><button id="nextBtn">Sau →</button></div>
+        </div>
+      </section>
+      <div class="footer">Văn phòng Đảng Ủy xã Mậu A - TheMinh</div>
+    </main>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbwXOEdYzP-ztp4elRI-HSQxdPQ9NkhhxFKki_UV9VEzUBUdruJgUsm5-Nmm66wvl3RXfw/exec";
+    let DATA = [];
+    let filtered = [];
+    let page = 1;
+    const colors = { "Trước hạn": "#16a36a", "Đúng hạn": "#3157d5", "Đang triển khai": "#12a8b4", "Quá hạn": "#e5484d", "Chưa cập nhật": "#98a2b3", "Đã hoàn thành": "#7c3aed" };
+    const completedStatuses = new Set(["Trước hạn", "Đúng hạn", "Đã hoàn thành"]);
+    const $ = id => document.getElementById(id);
+    function esc(s) { return String(s ?? "").replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m])) }
+    function formatDate(v) { if (!v) return "—"; const s = String(v); if (/^\d{4}-\d{2}-\d{2}/.test(s)) { const [y, m, d] = s.slice(0, 10).split("-"); return `${d}/${m}/${y}` } return s }
+    function badge(status) { let c = status === "Quá hạn" ? "red" : status === "Đang triển khai" ? "amber" : completedStatuses.has(status) ? "green" : "gray"; return `<span class="badge badge-${c}">${esc(status)}</span>` }
+    function setSync(state, message) { const dot = $("syncDot"), txt = $("syncText"); dot.className = "sync-dot " + state; txt.textContent = message }
+    function normalizeTask(x, i) { return { owner: String(x.owner ?? x.canBo ?? x.sheetName ?? "Chưa xác định").trim(), position: String(x.position ?? x.chucVu ?? "").trim(), stt: x.stt ?? i + 1, task: String(x.task ?? x.nhiemVu ?? x["Nhiệm vụ"] ?? "").trim(), role: String(x.role ?? x.vaiTro ?? "").trim(), due: String(x.due ?? x.hanHoanThanh ?? "").trim(), completed: String(x.completed ?? x.ngayHoanThanh ?? "").trim(), status: String(x.status ?? x.trangThai ?? "Chưa cập nhật").trim() || "Chưa cập nhật", emergent: x.emergent === true || String(x.emergent ?? x.phatSinh ?? "").toLowerCase() === "true" || String(x.emergent ?? x.phatSinh ?? "").toLowerCase() === "có", product: String(x.product ?? x.sanPham ?? "").trim() } }
+    function extractTasks(raw) {
+      let arr = [];
+      if (Array.isArray(raw)) arr = raw;
+      else if (raw && Array.isArray(raw.tasks)) arr = raw.tasks;
+      else if (raw && raw.data && Array.isArray(raw.data)) arr = raw.data;
+      if (!arr.length) throw new Error("API không trả về danh sách tasks hoặc danh sách đang rỗng");
+      return arr.map(normalizeTask).filter(x => x.task && x.task.length > 10);
+    }
+    function rebuildFilters() {
+      const current = { owner: $("owner").value, status: $("status").value, role: $("role").value };
+      $("owner").innerHTML = '<option value="">Tất cả cán bộ</option>';
+      $("status").innerHTML = '<option value="">Tất cả trạng thái</option>';
+      $("role").innerHTML = '<option value="">Tất cả vai trò</option>';
+      [...new Set(DATA.map(x => x.owner).filter(Boolean))].sort().forEach(v => $("owner").insertAdjacentHTML("beforeend", `<option>${esc(v)}</option>`));
+      [...new Set(DATA.map(x => x.status).filter(Boolean))].sort().forEach(v => $("status").insertAdjacentHTML("beforeend", `<option>${esc(v)}</option>`));
+      [...new Set(DATA.map(x => x.role).filter(Boolean))].sort().forEach(v => $("role").insertAdjacentHTML("beforeend", `<option>${esc(v)}</option>`));
+      if ([...$("owner").options].some(o => o.value === current.owner)) $("owner").value = current.owner;
+      if ([...$("status").options].some(o => o.value === current.status)) $("status").value = current.status;
+      if ([...$("role").options].some(o => o.value === current.role)) $("role").value = current.role;
+    }
+    async function loadData(manual = false) {
+      const btn = $("refreshBtn");
+      try {
+        setSync("loading", "Đang đồng bộ dữ liệu từ Google Sheet...");
+        if (btn) btn.disabled = true;
+        const response = await fetch(API_URL + "?t=" + Date.now(), { cache: "no-store", redirect: "follow" });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const raw = await response.json();
+        DATA = extractTasks(raw);
+        rebuildFilters(); applyFilters();
+        setSync("ok", `Đã đồng bộ ${DATA.length} nhiệm vụ lúc ${new Date().toLocaleString("vi-VN")}`);
+      } catch (error) {
+        console.error("Lỗi đồng bộ:", error);
+        setSync("error", "Không tải được dữ liệu: " + error.message + ". Kiểm tra quyền Web App và phiên bản triển khai.");
+        if (!DATA.length) { filtered = []; render() }
+      } finally { if (btn) btn.disabled = false }
+    }
+    function applyFilters() {
+      const q = $("search").value.trim().toLowerCase(), owner = $("owner").value, status = $("status").value, role = $("role").value, em = $("emergent").value;
+      filtered = DATA.filter(x => (!q || (x.task + " " + x.product + " " + x.owner).toLowerCase().includes(q)) && (!owner || x.owner === owner) && (!status || x.status === status) && (!role || x.role === role) && (!em || String(x.emergent) === em));
+      page = 1; render();
+    }
+    function render() {
+      const total = filtered.length, done = filtered.filter(x => completedStatuses.has(x.status)).length;
+      $("kTotal").textContent = total; $("kDone").textContent = done; $("kDoing").textContent = filtered.filter(x => x.status === "Đang triển khai").length;
+      $("kLate").textContent = filtered.filter(x => x.status === "Quá hạn").length; $("kEmergent").textContent = filtered.filter(x => x.emergent).length;
+      $("kRate").textContent = (total ? Math.round(done / total * 100) : 0) + "% tỷ lệ hoàn thành";
+      $("sideTaskCount").textContent = DATA.length;
+      $("sideOwnerCount").textContent = new Set(DATA.map(x => x.owner).filter(Boolean)).size;
+      renderChart(); renderPersons(); renderTable();
+    }
+    function renderPersons() { const groups = {}; filtered.forEach(x => { groups[x.owner] ??= { total: 0, done: 0 }; groups[x.owner].total++; if (completedStatuses.has(x.status)) groups[x.owner].done++ }); $("personProgress").innerHTML = Object.entries(groups).sort((a, b) => (b[1].done / b[1].total) - (a[1].done / a[1].total)).map(([n, v]) => { let p = Math.round(v.done / v.total * 100); return `<div class="person-row"><div class="person-name" title="${esc(n)}">${esc(n)}</div><div class="track"><div class="fill" style="width:${p}%"></div></div><b>${p}%</b></div>` }).join("") || '<div class="empty">Không có dữ liệu</div>' }
+    function renderChart() { const canvas = $("statusChart"), ctx = canvas.getContext("2d"), dpr = window.devicePixelRatio || 1, w = canvas.clientWidth, h = canvas.clientHeight; canvas.width = w * dpr; canvas.height = h * dpr; ctx.scale(dpr, dpr); ctx.clearRect(0, 0, w, h); const keys = ["Trước hạn", "Đúng hạn", "Đang triển khai", "Quá hạn", "Chưa cập nhật"], vals = keys.map(k => filtered.filter(x => x.status === k).length), max = Math.max(1, ...vals); const pad = { l: 38, r: 16, t: 20, b: 54 }, cw = w - pad.l - pad.r, ch = h - pad.t - pad.b, barW = Math.min(56, cw / keys.length * .58), gap = cw / keys.length; ctx.strokeStyle = "#e5eaf2"; ctx.fillStyle = "#667085"; ctx.font = "11px Segoe UI"; for (let i = 0; i <= 4; i++) { let y = pad.t + ch - i * ch / 4; ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke(); ctx.fillText(Math.round(max * i / 4), 5, y + 4) } vals.forEach((v, i) => { let bh = v / max * ch, x = pad.l + i * gap + (gap - barW) / 2, y = pad.t + ch - bh; ctx.fillStyle = colors[keys[i]]; roundRect(ctx, x, y, barW, bh, 7); ctx.fill(); ctx.fillStyle = "#344054"; ctx.font = "bold 12px Segoe UI"; ctx.textAlign = "center"; ctx.fillText(v, x + barW / 2, y - 7); ctx.font = "10px Segoe UI"; ctx.fillStyle = "#667085"; wrapLabel(ctx, keys[i], x + barW / 2, pad.t + ch + 17, 70) }); ctx.textAlign = "left" }
+    function roundRect(ctx, x, y, w, h, r) { r = Math.min(r, w / 2, h / 2); ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath() }
+    function wrapLabel(ctx, text, x, y, max) { let words = text.split(" "), line = "", yy = y; words.forEach(word => { let t = line ? line + " " + word : word; if (ctx.measureText(t).width > max && line) { ctx.fillText(line, x, yy); line = word; yy += 12 } else line = t }); ctx.fillText(line, x, yy) }
+    function renderTable() { const size = +$("pageSize").value, pages = Math.max(1, Math.ceil(filtered.length / size)); if (page > pages) page = pages; const rows = filtered.slice((page - 1) * size, page * size); $("resultCount").textContent = filtered.length + " kết quả"; $("taskBody").innerHTML = rows.map((x, i) => `<tr><td>${(page - 1) * size + i + 1}</td><td><div class="owner">${esc(x.owner)}</div><div class="muted">${esc(x.position)}</div></td><td class="task-cell">${esc(x.task)}${x.product ? `<div class="muted" style="margin-top:5px"><b>Sản phẩm:</b> ${esc(x.product)}</div>` : ""}</td><td>${esc(x.role || "—")}</td><td>${formatDate(x.due)}</td><td>${formatDate(x.completed)}</td><td>${badge(x.status)}</td><td>${x.emergent ? '<span class="badge badge-blue">Có</span>' : '<span class="muted">Không</span>'}</td></tr>`).join(""); $("empty").style.display = rows.length ? "none" : "block"; $("pageInfo").textContent = `Trang ${page} / ${pages}`; $("prevBtn").disabled = page <= 1; $("nextBtn").disabled = page >= pages }
+    function exportCSV() { const cols = ["Cán bộ", "Chức vụ", "STT", "Nhiệm vụ", "Vai trò", "Hạn hoàn thành", "Ngày hoàn thành", "Trạng thái", "Phát sinh", "Sản phẩm"]; const rows = filtered.map(x => [x.owner, x.position, x.stt, x.task, x.role, formatDate(x.due), formatDate(x.completed), x.status, x.emergent ? "Có" : "Không", x.product]); const csv = "\uFEFF" + [cols, ...rows].map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n"); const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })); a.download = "dashboard_nhiem_vu.csv"; a.click(); URL.revokeObjectURL(a.href) }
+    ["search", "owner", "status", "role", "emergent"].forEach(id => $(id).addEventListener(id === "search" ? "input" : "change", applyFilters));
+    $("pageSize").addEventListener("change", () => { page = 1; renderTable() }); $("prevBtn").onclick = () => { if (page > 1) { page--; renderTable() } }; $("nextBtn").onclick = () => { page++; renderTable() }; window.addEventListener("resize", renderChart);
+    document.querySelectorAll('.nav-item[data-target]').forEach(item => { item.addEventListener('click', e => { e.preventDefault(); const target = document.getElementById(item.dataset.target); if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active')); item.classList.add('active'); history.replaceState(null, '', '#' + item.dataset.target) } }) });
+    render(); loadData(); setInterval(() => loadData(false), 60000);
+  </script>
+</body>
+
+</html>
