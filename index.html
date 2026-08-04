@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hệ thống Quản lý Nhiệm vụ Văn phòng</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--text:#172033;--muted:#667085;--primary:#3157d5;--primary2:#6e8efb;--green:#16a36a;--amber:#f59e0b;--orange:#f97316;--red:#e5484d;--cyan:#12a8b4;--purple:#7c3aed;--border:#e5eaf2;--shadow:0 10px 30px rgba(31,50,95,.08)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}section,[id]{scroll-margin-top:18px}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}.sidebar{background:linear-gradient(180deg,#172554,#1e3a8a);color:#fff;padding:22px 16px;position:sticky;top:0;height:100vh;overflow:auto;z-index:20}.brand{display:flex;align-items:center;gap:12px;margin-bottom:23px}.logo{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,#7dd3fc,#fff);display:grid;place-items:center;color:#1e3a8a;font-weight:900}.brand h1{font-size:16px;margin:0;line-height:1.25}.brand small{opacity:.7}.nav-title{font-size:10px;text-transform:uppercase;letter-spacing:.13em;opacity:.55;margin:18px 9px 8px}.nav-item{padding:10px 12px;border-radius:10px;margin:4px 0;font-size:13px;display:flex;gap:10px;align-items:center;cursor:pointer;transition:.2s;text-decoration:none;color:inherit}.nav-item:hover{background:rgba(255,255,255,.09);transform:translateX(2px)}.nav-item.active{background:rgba(255,255,255,.16)}.side-note{margin-top:22px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:13px;font-size:12px;line-height:1.5}
+.main{padding:26px;min-width:0}.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}.title h2{margin:0 0 6px;font-size:26px}.title p{margin:0;color:var(--muted);font-size:13px}.sync-status{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);margin-top:7px}.sync-dot{width:8px;height:8px;border-radius:50%;background:#98a2b3}.sync-dot.loading{background:var(--amber);animation:pulse 1s infinite}.sync-dot.ok{background:var(--green)}.sync-dot.error{background:var(--red)}@keyframes pulse{50%{opacity:.35}}.actions{display:flex;gap:8px;flex-wrap:wrap}button,.btn{border:1px solid var(--border);background:#fff;color:var(--text);padding:10px 13px;border-radius:10px;font-weight:650;cursor:pointer}button:hover{border-color:#b9c4df}.btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}.mobile-menu{display:none}
+.filters{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;display:grid;grid-template-columns:2fr repeat(4,1fr);gap:10px;box-shadow:var(--shadow);margin-bottom:18px}.filters-advanced{grid-template-columns:repeat(4,1fr);margin-top:-8px}.filter-actions{display:flex;gap:8px;align-items:center}input,select{width:100%;border:1px solid var(--border);border-radius:10px;padding:10px 11px;background:#fff;color:var(--text);outline:none}input:focus,select:focus{border-color:#7c93e8;box-shadow:0 0 0 3px rgba(49,87,213,.1)}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:26px 0 12px}.section-title h3{font-size:18px;margin:0}.section-title p{font-size:12px;color:var(--muted);margin:3px 0 0}.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:13px;margin-bottom:18px}.kpi{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}.kpi:after{content:"";position:absolute;width:70px;height:70px;border-radius:50%;right:-25px;top:-25px;background:var(--accent);opacity:.1}.kpi-label{font-size:11px;color:var(--muted);font-weight:750;text-transform:uppercase;letter-spacing:.04em}.kpi-value{font-size:27px;font-weight:850;margin:8px 0 3px}.kpi-sub{font-size:11px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:18px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:17px;box-shadow:var(--shadow);min-width:0}.card-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.card h3{font-size:15px;margin:0}.muted{color:var(--muted)}.chart{width:100%;height:285px;display:block}.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+.alert-list{display:flex;flex-direction:column;gap:9px}.alert-row{display:grid;grid-template-columns:92px 1fr auto;gap:10px;align-items:center;padding:11px;border:1px solid var(--border);border-radius:12px;background:#fff}.alert-row:hover{background:#fbfcff}.alert-task{font-size:12px;line-height:1.4}.alert-owner{font-weight:750;font-size:12px}.urgency{font-size:11px;font-weight:800;padding:5px 8px;border-radius:99px;white-space:nowrap}.u-overdue{background:linear-gradient(135deg,#ffe4e6,#fecdd3);color:#b42318;border:1px solid #fda4af;box-shadow:0 3px 10px rgba(229,72,77,.12)}.u-today{background:linear-gradient(135deg,#ffedd5,#fed7aa);color:#c2410c;border:1px solid #fdba74;box-shadow:0 3px 10px rgba(249,115,22,.12)}.u-soon{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;border:1px solid #facc15}.u-safe{background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#067647;border:1px solid #86efac}.date-input.invalid{border-color:#e5484d!important;box-shadow:0 0 0 3px rgba(229,72,77,.12)!important}.person-row:hover{background:#f7f9ff;border-radius:10px;padding:5px 7px;margin:-5px -7px}.sort-select{width:210px}
+.progress-list{display:flex;flex-direction:column;gap:12px}.person-row{display:grid;grid-template-columns:130px 1fr 44px;gap:10px;align-items:center;font-size:12px;cursor:pointer}.person-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:650}.track{height:9px;border-radius:99px;background:#edf1f7;overflow:hidden}.fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--primary),var(--primary2))}.staff-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.staff-card{border:1px solid var(--border);border-radius:14px;padding:14px;background:#fff;cursor:pointer;transition:.2s}.staff-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}.staff-card h4{margin:0 0 9px;font-size:14px}.staff-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.mini-stat{background:#f7f9fd;border-radius:99px;padding:8px;text-align:center}.mini-stat b{display:block;font-size:16px}.mini-stat span{font-size:10px;color:var(--muted)}
+.month-toolbar{display:flex;gap:9px;align-items:center}.month-toolbar select{width:160px}.summary-box{padding:14px;border-radius:13px;background:#f8faff;border:1px solid var(--border)}.summary-box b{font-size:22px;display:block;margin-top:5px}.summary-box span{font-size:11px;color:var(--muted)}
+.timeline{overflow:auto}.timeline-grid{min-width:850px;display:grid;grid-template-columns:190px repeat(5,1fr);border:1px solid var(--border);border-radius:13px;overflow:hidden}.timeline-grid>div{padding:11px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);font-size:12px}.timeline-head{background:#f8faff;font-weight:750;color:#475467}.timeline-owner{font-weight:700}.timeline-cell{text-align:center}.timeline-count{display:inline-flex;min-width:30px;height:28px;border-radius:9px;align-items:center;justify-content:center;font-weight:800;background:#eef2ff;color:#3157d5}
+.table-card{padding:0;overflow:hidden}.table-toolbar{padding:16px 17px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px}.table-wrap{overflow:auto;max-height:610px}table{width:100%;border-collapse:collapse;min-width:1120px}th{position:sticky;top:0;z-index:2;background:#f8faff;color:#475467;text-align:left;padding:11px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}td{padding:12px;border-bottom:1px solid #eef1f6;font-size:12px;vertical-align:top}tr:hover td{background:#fbfcff}.task-cell{min-width:330px;line-height:1.45}.owner{font-weight:700}.badge{display:inline-flex;align-items:center;padding:5px 8px;border-radius:99px;font-size:11px;font-weight:700;white-space:nowrap}.badge-green{background:#e8f7f0;color:#087c4d}.badge-blue{background:#eaf0ff;color:#3157d5}.badge-red{background:#feecec;color:#c62f35}.badge-amber{background:#fff4dc;color:#a96900}.badge-gray{background:#eef1f5;color:#596273}.pagination{display:flex;justify-content:space-between;align-items:center;padding:13px 17px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}.page-btns{display:flex;gap:6px}.page-btns button{padding:7px 10px}.empty{padding:42px;text-align:center;color:var(--muted)}.footer{color:var(--muted);font-size:11px;text-align:right;margin-top:14px}
+@media(max-width:1250px){.kpis{grid-template-columns:repeat(3,1fr)}.staff-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1000px){.shell{grid-template-columns:1fr}.sidebar{position:fixed;left:-280px;width:260px;transition:.25s}.sidebar.open{left:0}.mobile-menu{display:inline-flex}.filters,.filters-advanced{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr 1fr}.staff-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.main{padding:14px}.topbar{flex-direction:column}.filters,.filters-advanced{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.grid-3,.staff-grid{grid-template-columns:1fr}.title h2{font-size:21px}.actions{width:100%}.actions button{flex:1}.filter-actions{flex-direction:column}.filter-actions button{width:100%}}
+@media print{.sidebar,.filters,.filters-advanced,.actions,.pagination,.mobile-menu{display:none!important}.shell{display:block}.main{padding:0}.card,.kpi{box-shadow:none}.table-wrap{max-height:none;overflow:visible}.section-title{page-break-after:avoid}}
+
+.clickable-number{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:4px}.clickable-number:hover{color:#3157d5}.kpi{cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}.kpi:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(49,87,213,.14)}.summary-box{cursor:pointer;transition:transform .15s ease,border-color .15s ease}.summary-box:hover{transform:translateY(-2px);border-color:#9eb0ee}.chart{cursor:pointer}.drill-modal{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}.drill-modal.open{display:flex}.drill-dialog{width:min(1100px,96vw);max-height:90vh;background:#fff;border-radius:18px;box-shadow:0 24px 70px rgba(15,23,42,.28);display:flex;flex-direction:column;overflow:hidden}.drill-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:18px 20px;border-bottom:1px solid var(--border)}.drill-head h3{margin:0;font-size:18px}.drill-head p{margin:5px 0 0;color:var(--muted);font-size:12px}.drill-actions{display:flex;gap:8px;flex-wrap:wrap}.drill-body{overflow:auto;padding:0 20px 20px}.drill-table{width:100%;border-collapse:collapse;font-size:12px}.drill-table th{position:sticky;top:0;background:#f8faff;z-index:1;text-align:left;padding:10px;border-bottom:1px solid var(--border)}.drill-table td{padding:10px;border-bottom:1px solid #edf0f5;vertical-align:top}.drill-empty{padding:38px;text-align:center;color:var(--muted)}.drill-count{font-weight:700;color:#3157d5}.person-row b,.mini-stat b,.timeline-count,.badge[id$="Count"]{cursor:pointer}.person-row b:hover,.mini-stat b:hover,.timeline-count:hover,.badge[id$="Count"]:hover{color:#3157d5;text-decoration:underline;text-decoration-style:dotted}.drill-search{width:min(320px,100%)}@media(max-width:700px){.drill-dialog{width:100%;max-height:94vh}.drill-head{flex-direction:column}.drill-actions{width:100%}.drill-actions button{flex:1}.drill-table{min-width:850px}}
+
+.priority-card{display:flex;flex-direction:column;min-height:322px}
+.priority-card .priority-list{display:grid;grid-template-columns:1fr;gap:9px;max-height:285px;overflow:auto;padding-right:3px}
+.priority-card .alert-row{grid-template-columns:112px minmax(0,1fr) auto;min-height:62px}
+.deadline-grid{align-items:stretch}
+.deadline-grid>.card{display:flex;flex-direction:column;min-height:290px}
+.deadline-grid .alert-list{flex:1}
+.deadline-grid .alert-row{grid-template-columns:98px minmax(0,1fr) auto;min-height:64px}
+.alert-task{min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.week-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.week-toolbar input{width:150px}
+.week-range{font-size:12px;color:var(--muted);font-weight:650}
+.week-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:14px}
+.week-kpi{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--shadow);cursor:pointer}
+.week-kpi span{display:block;font-size:10px;color:var(--muted);font-weight:750;text-transform:uppercase;letter-spacing:.04em}
+.week-kpi b{display:block;font-size:24px;margin-top:7px}
+.week-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
+.week-table-wrap{overflow:auto;max-height:390px}
+.week-table{min-width:760px}
+.week-table th,.week-table td{padding:10px 11px}
+.week-progress{display:flex;flex-direction:column;gap:12px}
+.week-progress-row{display:grid;grid-template-columns:minmax(120px,1fr) 1.4fr 42px;gap:10px;align-items:center;font-size:12px}
+@media(max-width:1250px){.week-kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1000px){.week-layout{grid-template-columns:1fr}.priority-card{min-height:auto}}
+@media(max-width:650px){.week-kpis{grid-template-columns:1fr 1fr}.week-toolbar{width:100%}.week-toolbar input{flex:1}.priority-card .alert-row,.deadline-grid .alert-row{grid-template-columns:1fr auto}.priority-card .alert-row>div:first-child,.deadline-grid .alert-row>div:first-child{grid-column:1/2}.alert-task{grid-column:1/-1}}
+
+.compare-layout{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-bottom:18px}
+.compare-chart-wrap{position:relative;min-height:360px}
+.compare-chart{width:100%;height:330px;display:block;cursor:pointer}
+.compare-table-wrap{overflow:auto}
+.compare-table{min-width:650px}
+.compare-table th,.compare-table td{text-align:center}
+.compare-table th:first-child,.compare-table td:first-child{text-align:left}
+.compare-number{font-weight:800;cursor:pointer;text-decoration:underline dotted;text-underline-offset:4px}
+.compare-number:hover{color:var(--primary)}
+.compare-trend{display:inline-flex;align-items:center;gap:4px;padding:4px 7px;border-radius:99px;font-size:11px;font-weight:800}
+.compare-up{background:#e8f7f0;color:#087c4d}.compare-down{background:#feecec;color:#c62f35}.compare-flat{background:#eef1f5;color:#596273}
+.compare-note{font-size:11px;color:var(--muted)}
+@media(max-width:1000px){.compare-layout{grid-template-columns:1fr}}
+@media(max-width:650px){.compare-chart{height:290px}.compare-chart-wrap{min-height:310px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="logo">VP</div><div><h1>Văn phòng số</h1><small>Văn phòng Đảng Ủy</small></div></div>
+  <div class="nav-title">Điều hành</div>
+  <a class="nav-item active" href="#leadership" data-target="leadership">◉ Tổng quan lãnh đạo</a>
+  <a class="nav-item" href="#deadline-alerts" data-target="deadline-alerts">⚠ Cảnh báo thời hạn</a>
+  <a class="nav-item" href="#monthly-report" data-target="monthly-report">▦ Báo cáo theo tháng</a>
+  <a class="nav-item" href="#month-comparison" data-target="month-comparison">↗ So sánh với 2 tháng trước</a>
+  <div class="nav-title">Theo dõi</div>
+  <a class="nav-item" href="#performance" data-target="performance">◎ Hiệu suất cán bộ</a>
+  <a class="nav-item" href="#timeline" data-target="timeline">◷ Timeline nhiệm vụ</a>
+  <a class="nav-item" href="#task-list" data-target="task-list">▣ Danh sách nhiệm vụ</a>
+  <div class="nav-title">Báo cáo</div>
+  <a class="nav-item" href="#weekly-report" data-target="weekly-report">▤ Báo cáo tuần</a>
+  <a class="nav-item" href="#status-section" data-target="status-section">◫ Trạng thái xử lý</a>
+  <a class="nav-item" href="#task-list" data-target="task-list">⌕ Tìm kiếm nâng cao</a>
+  <div class="side-note"><b>Dữ liệu Realtime Supabase</b><br><span id="sideStats">0 cán bộ · 0 nhiệm vụ</span><br><span style="opacity:.7">Nguồn: Supabase Database</span></div>
+</aside>
+<main class="main" id="leadership">
+  <div class="topbar">
+    <div class="title"><button class="mobile-menu" onclick="toggleMenu()">☰ Menu</button><h2>Hệ thống quản lý nhiệm vụ Văn phòng</h2><p>Theo dõi hiệu quả xử lý nhiệm vụ toàn Văn phòng</p><div class="sync-status"><span id="syncDot" class="sync-dot ok"></span><span id="syncText">Chờ đồng bộ...</span></div></div>
+    <div class="actions"><button id="refreshBtn" onclick="loadData()">↻ Cập nhật ngay</button><button onclick="window.print()">In / Xuất PDF</button><button class="btn-primary" onclick="exportCSV()">Xuất CSV</button></div>
+  </div>
+
+  <section class="filters">
+    <input id="search" placeholder="Tìm nhiệm vụ, sản phẩm, cán bộ...">
+    <select id="owner"><option value="">Tất cả cán bộ</option></select>
+    <select id="status"><option value="">Tất cả trạng thái</option></select>
+    <select id="role"><option value="">Tất cả vai trò</option></select>
+    <select id="emergent"><option value="">Tất cả nhiệm vụ</option><option value="true">Nhiệm vụ phát sinh</option><option value="false">Nhiệm vụ kế hoạch</option></select>
+  </section>
+  <section class="filters filters-advanced">
+    <input id="dateFrom" class="date-input" type="text" inputmode="numeric" maxlength="10" placeholder="Từ ngày dd/mm/yyyy" title="Hạn từ ngày, định dạng dd/mm/yyyy">
+    <input id="dateTo" class="date-input" type="text" inputmode="numeric" maxlength="10" placeholder="Đến ngày dd/mm/yyyy" title="Hạn đến ngày, định dạng dd/mm/yyyy">
+    <select id="urgency"><option value="">Tất cả mức thời hạn</option><option value="overdue">Quá hạn</option><option value="today">Đến hạn hôm nay</option><option value="soon3">Còn tối đa 3 ngày</option><option value="soon7">Còn tối đa 7 ngày</option><option value="safe">Còn trên 7 ngày</option></select>
+    <div class="filter-actions"><button onclick="resetFilters()">Xóa bộ lọc</button><button class="btn-primary" onclick="scrollToTasks()">Xem kết quả</button></div>
+  </section>
+
+  <section class="kpis">
+    <div class="kpi" data-drill="kpi-total" style="--accent:#3157d5"><div class="kpi-label">Tổng nhiệm vụ</div><div class="kpi-value" id="kTotal">0</div><div class="kpi-sub">Trong phạm vi bộ lọc</div></div>
+    <div class="kpi" data-drill="kpi-done" style="--accent:#16a36a"><div class="kpi-label">Đã hoàn thành</div><div class="kpi-value" id="kDone">0</div><div class="kpi-sub" id="kRate">0% tỷ lệ hoàn thành</div></div>
+    <div class="kpi" data-drill="kpi-doing" style="--accent:#12a8b4"><div class="kpi-label">Đang triển khai</div><div class="kpi-value" id="kDoing">0</div><div class="kpi-sub">Cần tiếp tục theo dõi</div></div>
+    <div class="kpi" data-drill="kpi-late" style="--accent:#e5484d"><div class="kpi-label">Quá hạn</div><div class="kpi-value" id="kLate">0</div><div class="kpi-sub">Cần ưu tiên xử lý</div></div>
+    <div class="kpi" data-drill="kpi-soon" style="--accent:#f59e0b"><div class="kpi-label">Sắp đến hạn</div><div class="kpi-value" id="kSoon">0</div><div class="kpi-sub">Trong vòng 3 ngày</div></div>
+    <div class="kpi" data-drill="kpi-emergent" style="--accent:#7c3aed"><div class="kpi-label">Nhiệm vụ phát sinh</div><div class="kpi-value" id="kEmergent">0</div><div class="kpi-sub">Ngoài kế hoạch ban đầu</div></div>
+  </section>
+
+  <section class="grid" id="status-section">
+    <div class="card"><div class="card-head"><h3>Phân bổ trạng thái nhiệm vụ</h3><div class="legend"><span><i class="dot" style="background:#16a36a"></i>Trước hạn</span><span><i class="dot" style="background:#3157d5"></i>Đúng hạn</span><span><i class="dot" style="background:#12a8b4"></i>Đang triển khai</span><span><i class="dot" style="background:#e5484d"></i>Quá hạn</span></div></div><canvas id="statusChart" class="chart" width="424" height="285"></canvas></div>
+    <div class="card priority-card"><div class="card-head"><h3>Top việc cần ưu tiên</h3><span class="muted" style="font-size:11px">Theo hạn hoàn thành</span></div><div id="priorityList" class="alert-list priority-list"></div></div>
+  </section>
+
+  <div class="section-title" id="deadline-alerts"><div><h3>Cảnh báo thời hạn</h3><p>Tự động phân loại công việc theo số ngày còn lại</p></div></div>
+  <section class="grid-3 deadline-grid">
+    <div class="card"><div class="card-head"><h3>Quá hạn</h3><span class="badge badge-red" id="overdueCount">0</span></div><div id="overdueList" class="alert-list"></div></div>
+    <div class="card"><div class="card-head"><h3>Đến hạn hôm nay</h3><span class="badge badge-amber" id="todayCount">0</span></div><div id="todayList" class="alert-list"></div></div>
+    <div class="card"><div class="card-head"><h3>Sắp đến hạn ≤ 3 ngày</h3><span class="badge badge-blue" id="soonCount">0</span></div><div id="soonList" class="alert-list"></div></div>
+  </section>
+
+  <div class="section-title" id="weekly-report">
+    <div><h3>Báo cáo tuần</h3><p>Tổng hợp nhiệm vụ có hạn hoàn thành trong tuần được chọn</p></div>
+    <div class="week-toolbar">
+      <button type="button" onclick="changeWeek(-7)" title="Tuần trước">←</button>
+      <input id="weekDate" type="date" aria-label="Chọn ngày trong tuần">
+      <button type="button" onclick="setCurrentWeek()">Tuần hiện tại</button>
+      <button type="button" onclick="changeWeek(7)" title="Tuần sau">→</button>
+    </div>
+  </div>
+  <section class="card" style="margin-bottom:18px">
+    <div class="card-head"><div><h3 id="weekTitle">Tuần hiện tại</h3><div id="weekRange" class="week-range"></div></div><span id="weekDataNote" class="muted" style="font-size:11px"></span></div>
+    <div class="week-kpis" id="weekSummary">
+      <div class="week-kpi" data-drill="week-total"><span>Tổng nhiệm vụ</span><b id="wTotal" class="clickable-number">0</b></div>
+      <div class="week-kpi" data-drill="week-done"><span>Đã hoàn thành</span><b id="wDone" class="clickable-number">0</b></div>
+      <div class="week-kpi" data-drill="week-doing"><span>Đang xử lý</span><b id="wDoing" class="clickable-number">0</b></div>
+      <div class="week-kpi" data-drill="week-late"><span>Quá hạn</span><b id="wLate" class="clickable-number">0</b></div>
+      <div class="week-kpi" data-drill="week-emergent"><span>Phát sinh</span><b id="wEmergent" class="clickable-number">0</b></div>
+      <div class="week-kpi" data-drill="week-rate"><span>Tỷ lệ hoàn thành</span><b id="wRate" class="clickable-number">0%</b></div>
+    </div>
+    <div class="week-layout">
+      <div>
+        <div class="card-head"><h3>Chi tiết nhiệm vụ trong tuần</h3><span id="weekResultCount" class="muted" style="font-size:11px">0 nhiệm vụ</span></div>
+        <div class="week-table-wrap"><table class="week-table"><thead><tr><th>STT</th><th>Cán bộ</th><th>Nhiệm vụ</th><th>Hạn</th><th>Trạng thái</th></tr></thead><tbody id="weekTaskBody"></tbody></table></div>
+      </div>
+      <div>
+        <div class="card-head"><h3>Kết quả theo cán bộ</h3><span class="muted" style="font-size:11px">Hoàn thành / tổng</span></div>
+        <div id="weekStaffProgress" class="week-progress"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-title" id="monthly-report"><div><h3>Báo cáo theo tháng</h3><p>Tổng hợp nhiệm vụ theo hạn hoàn thành</p></div><div class="month-toolbar"><select id="monthSelect"></select></div></div>
+  <section class="grid-3" id="monthSummary"></section>
+
+  <div class="section-title" id="performance"><div><h3>Hiệu suất cán bộ</h3><p>Bấm vào một cán bộ để lọc danh sách nhiệm vụ</p></div></div>
+  <section class="grid">
+    <div class="card"><div class="card-head"><h3>Tỷ lệ hoàn thành theo cán bộ</h3><span class="muted" style="font-size:11px">Hoàn thành / tổng nhiệm vụ</span></div><div id="personProgress" class="progress-list"></div></div>
+    <div class="card"><div class="card-head"><h3>Nhân sự cần chú ý</h3><span class="muted" style="font-size:11px">Theo số việc quá hạn</span></div><div id="staffAttention" class="alert-list"></div></div>
+  </section>
+  <section class="staff-grid" id="staffCards"></section>
+
+  <div class="section-title" id="timeline"><div><h3>Timeline nhiệm vụ</h3><p>Phân bố thời hạn theo từng cán bộ</p></div></div>
+  <section class="card timeline"><div id="timelineGrid" class="timeline-grid"></div></section>
+
+  <div class="section-title" id="task-list"><div><h3>Danh sách nhiệm vụ</h3><p>Hiển thị theo bộ lọc hiện tại</p></div></div>
+  <section class="card table-card">
+    <div class="table-toolbar"><div><h3>Chi tiết nhiệm vụ</h3><span class="muted" id="resultCount">0 kết quả</span></div><div style="display:flex;gap:8px;flex-wrap:wrap"><select id="sortDue" class="sort-select"><option value="default">Sắp xếp mặc định</option><option value="asc">Hạn gần nhất trước</option><option value="desc">Hạn xa nhất trước</option><option value="noneLast">Có hạn trước, chưa có hạn sau</option></select><select id="pageSize" style="width:120px"><option value="10">10 dòng</option><option value="20" selected="">20 dòng</option><option value="50">50 dòng</option><option value="100">100 dòng</option></select></div></div>
+    <div class="table-wrap"><table><thead><tr><th>STT</th><th>Cán bộ</th><th>Nhiệm vụ cụ thể</th><th>Vai trò</th><th>Hạn hoàn thành ↕</th><th>Còn lại</th><th>Ngày hoàn thành</th><th>Trạng thái</th><th>Phát sinh</th></tr></thead><tbody id="taskBody"></tbody></table><div id="empty" class="empty" style="display: none;">Không tìm thấy nhiệm vụ phù hợp.</div></div>
+    <div class="pagination"><span id="pageInfo">Trang 1 / 1</span><div class="page-btns"><button id="prevBtn" disabled="">← Trước</button><button id="nextBtn">Sau →</button></div></div>
+  </section>
+
+  <div class="section-title" id="month-comparison">
+    <div><h3>So sánh với 2 tháng trước</h3><p>Đối chiếu tháng đang chọn trong Báo cáo theo tháng với hai tháng liền trước</p></div>
+    <span id="compareDataNote" class="compare-note"></span>
+  </div>
+  <section class="compare-layout">
+    <div class="card compare-chart-wrap">
+      <div class="card-head">
+        <h3>Xu hướng khối lượng và kết quả xử lý</h3>
+        <div class="legend">
+          <span><i class="dot" style="background:#3157d5"></i>Tổng</span>
+          <span><i class="dot" style="background:#16a36a"></i>Hoàn thành</span>
+          <span><i class="dot" style="background:#12a8b4"></i>Đang triển khai</span>
+          <span><i class="dot" style="background:#e5484d"></i>Quá hạn</span>
+          <span><i class="dot" style="background:#7c3aed"></i>Tỷ lệ hoàn thành</span>
+        </div>
+      </div>
+      <canvas id="monthCompareChart" class="compare-chart"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Bảng so sánh 3 tháng</h3><span class="muted" style="font-size:11px">Bấm số liệu để xem nhiệm vụ</span></div>
+      <div class="compare-table-wrap">
+        <table class="compare-table">
+          <thead><tr><th>Tháng</th><th>Tổng</th><th>Hoàn thành</th><th>Đang xử lý</th><th>Quá hạn</th><th>Phát sinh</th><th>Tỷ lệ</th><th>So tháng trước</th></tr></thead>
+          <tbody id="monthCompareBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div id="drillModal" class="drill-modal" aria-hidden="true">
+    <div class="drill-dialog" role="dialog" aria-modal="true" aria-labelledby="drillTitle">
+      <div class="drill-head">
+        <div><h3 id="drillTitle">Nhiệm vụ</h3><p><span id="drillCount" class="drill-count">0</span> nhiệm vụ phù hợp</p></div>
+        <div class="drill-actions"><input id="drillSearch" class="drill-search" placeholder="Tìm trong kết quả..."><button id="drillApplyBtn">Áp dụng vào danh sách</button><button id="drillCloseBtn" class="btn-primary">Đóng</button></div>
+      </div>
+      <div class="drill-body"><table class="drill-table"><thead><tr><th>STT</th><th>Cán bộ</th><th>Nhiệm vụ cụ thể</th><th>Hạn</th><th>Trạng thái</th><th>Phát sinh</th></tr></thead><tbody id="drillBody"></tbody></table><div id="drillEmpty" class="drill-empty" style="display:none">Không có nhiệm vụ phù hợp.</div></div>
+    </div>
+  </div>
+  <div class="footer">Dashboard Realtime · Truy vấn trực tiếp Supabase REST API</div>
+</main>
+</div>
+
+<script>
+  // =======================================================
+  // CẤU HÌNH SUPABASE API (THAY THẾ THÔNG TIN CỦA BẠN TẠI ĐÂY)
+  // =======================================================
+  const SUPABASE_URL = "https://zipvocbtmilyeuhqqrur.supabase.co"; 
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppcHZvY2J0bWlseWV1aHFxcnVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQyNTY0NjgsImV4cCI6MjA5OTgzMjQ2OH0.-LUZdiukACGQS7pR71HNFmxmDkDGNi2x3Rs6KM9nN5s";
+  const API_URL = `${SUPABASE_URL}/rest/v1/department_tasks?select=*&order=row_number.asc`;
+
+  let DATA=[], filtered=[], page=1, renderQueued=false;
+  const colors={"Trước hạn":"#16a36a","Đúng hạn":"#3157d5","Đang triển khai":"#12a8b4","Quá hạn":"#e5484d","Chưa cập nhật":"#98a2b3","Đã hoàn thành":"#7c3aed"};
+  const completedStatuses=new Set(["Trước hạn","Đúng hạn","Đã hoàn thành"]), $=id=>document.getElementById(id);
+  let chartHitboxes=[], compareChartHitboxes=[], drillRows=[], drillPredicate=null, drillTitleText="";
+
+  function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+  
+  function parseDate(v){
+    if(!v) return null;
+    if(v instanceof Date) return isNaN(v)?null:new Date(v.getFullYear(),v.getMonth(),v.getDate());
+    const s=String(v).trim();
+    if(/^\d{4}-\d{2}-\d{2}/.test(s)){
+      const d=new Date(s.slice(0,10)+"T00:00:00");
+      return isNaN(d)?null:d;
+    }
+    const m=s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+    if(m){
+      const d=new Date(+m[3],+m[2]-1,+m[1]);
+      return isNaN(d)?null:d;
+    }
+    return null;
+  }
+
+  function formatDate(v){const d=parseDate(v); return d?d.toLocaleDateString("vi-VN"):v||"—"}
+  function normalizeDateInputValue(value){const digits=String(value||"").replace(/\D/g,"").slice(0,8);if(digits.length<=2)return digits;if(digits.length<=4)return digits.slice(0,2)+"/"+digits.slice(2);return digits.slice(0,2)+"/"+digits.slice(2,4)+"/"+digits.slice(4)}
+  
+  function parseDateInput(el){
+    const value=el.value.trim();
+    if(!value){el.classList.remove("invalid");return null}
+    const m=value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(!m){el.classList.add("invalid");return null}
+    const day=+m[1],month=+m[2],year=+m[3],d=new Date(year,month-1,day);
+    const valid=d.getFullYear()===year&&d.getMonth()===month-1&&d.getDate()===day;
+    el.classList.toggle("invalid",!valid);
+    return valid?d:null;
+  }
+
+  function setupDateInput(id){
+    const el=$(id);
+    el.addEventListener("input",()=>{el.value=normalizeDateInputValue(el.value);debouncedApply()});
+    el.addEventListener("blur",()=>{const d=parseDate(el.value);if(d)el.value=formatDate(d);parseDateInput(el);applyFilters()});
+  }
+
+  let filterTimer; function debouncedApply(){clearTimeout(filterTimer);filterTimer=setTimeout(applyFilters,180)}
+  function scheduleRender(){if(renderQueued)return;renderQueued=true;requestAnimationFrame(()=>{renderQueued=false;render()})}
+  
+  function dayDiff(v){
+    const d=v instanceof Date?v:parseDate(v);
+    if(!d)return null;
+    const now=new Date(); now.setHours(0,0,0,0);
+    return Math.round((d-now)/86400000);
+  }
+
+  function urgencyInfo(x){
+    if(completedStatuses.has(x.status))return {key:"done",label:"Đã hoàn thành",cls:"u-safe",days:null};
+    const n=dayDiff(x._dueDate||x.due);
+    if(n===null)return {key:"none",label:"Chưa có hạn",cls:"u-safe",days:null};
+    if(n<0)return {key:"overdue",label:`Quá ${Math.abs(n)} ngày`,cls:"u-overdue",days:n};
+    if(n===0)return {key:"today",label:"Hôm nay",cls:"u-today",days:n};
+    if(n<=3)return {key:"soon3",label:`Còn ${n} ngày`,cls:"u-soon",days:n};
+    if(n<=7)return {key:"soon7",label:`Còn ${n} ngày`,cls:"u-soon",days:n};
+    return {key:"safe",label:`Còn ${n} ngày`,cls:"u-safe",days:n};
+  }
+
+  function badge(status){
+    let c=status==="Quá hạn"?"red":status==="Đang triển khai"?"amber":completedStatuses.has(status)?"green":"gray";
+    return `<span class="badge badge-${c}">${esc(status)}</span>`;
+  }
+
+  function setSync(state,message){$("syncDot").className="sync-dot "+state;$("syncText").textContent=message}
+
+  // MAP DỮ LIỆU TỪ NGUỒN SUPABASE SANG Cấu trúc DASHBOARD
+  function normalizeTask(x, i){
+    const due = String(x.due ?? "").trim();
+    const completed = String(x.completed ?? "").trim();
+    const obj = {
+      id: x.id,
+      owner: String(x.owner ?? x.sheet_name ?? "Chưa xác định").trim(),
+      position: String(x.position ?? "").trim(),
+      stt: x.stt ?? (i + 1),
+      task: String(x.task ?? "").trim(),
+      role: String(x.role ?? "").trim(),
+      due: due,
+      completed: completed,
+      status: String(x.status ?? "Chưa cập nhật").trim() || "Chưa cập nhật",
+      emergent: x.emergent === true,
+      product: String(x.product ?? "").trim()
+    };
+    obj._dueDate = parseDate(due);
+    obj._dueTime = obj._dueDate ? obj._dueDate.getTime() : null;
+    obj._search = (obj.task + " " + obj.product + " " + obj.owner + " " + obj.stt).toLowerCase();
+    return obj;
+  }
+
+  function rebuildFilters(){
+    const current={owner:$("owner").value,status:$("status").value,role:$("role").value};
+    [["owner","Tất cả cán bộ",DATA.map(x=>x.owner)],["status","Tất cả trạng thái",DATA.map(x=>x.status)],["role","Tất cả vai trò",DATA.map(x=>x.role)]].forEach(([id,label,vals])=>{
+      $(id).innerHTML=`<option value="">${label}</option>`;
+      [...new Set(vals.filter(Boolean))].sort().forEach(v=>$(id).insertAdjacentHTML("beforeend",`<option>${esc(v)}</option>`));
+      if([...$(id).options].some(o=>o.value===current[id]))$(id).value=current[id];
+    });
+    buildMonthOptions();
+  }
+
+  // TẢI DỮ LIỆU TỪ SUPABASE REST API
+  async function loadData(){
+    const btn=$("refreshBtn");
+    const savedPage=page;
+    try{
+      setSync("loading","Đang đồng bộ dữ liệu từ Supabase...");
+      btn.disabled=true;
+      
+      const response = await fetch(API_URL, {
+        method: "GET",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${SUPABASE_KEY}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if(!response.ok) throw new Error("Supabase HTTP Status: " + response.status);
+      const raw = await response.json();
+      
+      if(!Array.isArray(raw)) throw new Error("Dữ liệu trả về không phải là mảng danh sách");
+
+      DATA = raw.map(normalizeTask);
+      localStorage.setItem("vp_tasks_supabase_cache", JSON.stringify(DATA));
+      
+      rebuildFilters();
+      applyFilters();
+      page = Math.max(1, savedPage);
+      render();
+      setSync("ok", `Đã đồng bộ ${DATA.length} nhiệm vụ từ Supabase lúc ${new Date().toLocaleTimeString("vi-VN")}`);
+    } catch(error){
+      console.error(error);
+      const cached = localStorage.getItem("vp_tasks_supabase_cache");
+      if(cached){
+        try{
+          DATA = JSON.parse(cached).map(normalizeTask);
+          rebuildFilters();
+          applyFilters();
+          page = Math.max(1, savedPage);
+          render();
+          setSync("error", `Mất kết nối Supabase, hiển thị ${DATA.length} nhiệm vụ lưu gần nhất`);
+        }catch(e){
+          setSync("error", "Lỗi tải dữ liệu Supabase: " + error.message);
+        }
+      } else {
+        setSync("error", "Lỗi tải dữ liệu Supabase: " + error.message);
+      }
+    } finally {
+      btn.disabled=false;
+    }
+  }
+
+  function sortFiltered(){
+    const mode=$("sortDue").value;
+    if(mode==="default")return;
+    if(mode==="asc")filtered.sort((a,b)=>(a._dueTime??Infinity)-(b._dueTime??Infinity));
+    else if(mode==="desc")filtered.sort((a,b)=>(b._dueTime??-Infinity)-(a._dueTime??-Infinity));
+    else if(mode==="noneLast")filtered.sort((a,b)=>(a._dueTime===null)-(b._dueTime===null)||(a._dueTime??0)-(b._dueTime??0));
+  }
+
+  function applyFilters(){
+    const q=$("search").value.trim().toLowerCase(),owner=$("owner").value,status=$("status").value,role=$("role").value,em=$("emergent").value,from=parseDateInput($("dateFrom")),to=parseDateInput($("dateTo")),urg=$("urgency").value;
+    filtered=DATA.filter(x=>{
+      const due=x._dueDate,u=urgencyInfo(x);
+      return(!q||x._search.includes(q))&&(!owner||x.owner===owner)&&(!status||x.status===status)&&(!role||x.role===role)&&(!em||String(x.emergent)===em)&&(!from||due&&due>=from)&&(!to||due&&due<=to)&&(!urg||u.key===urg||(urg==="soon3"&&u.key==="today"));
+    });
+    sortFiltered();
+    page=1;
+    scheduleRender();
+  }
+
+  function resetFilters(){["search","owner","status","role","emergent","dateFrom","dateTo","urgency"].forEach(id=>$(id).value="");$("sortDue").value="default";document.querySelectorAll(".date-input").forEach(x=>x.classList.remove("invalid"));applyFilters()}
+  
+  function render(){
+    let total=filtered.length,done=0,doing=0,late=0,soon=0,emergent=0;
+    for(const x of filtered){
+      if(completedStatuses.has(x.status))done++;
+      if(x.status==="Đang triển khai")doing++;
+      const key=urgencyInfo(x).key;
+      if(key==="overdue")late++;
+      if(key==="today"||key==="soon3")soon++;
+      if(x.emergent)emergent++;
+    }
+    $("kTotal").textContent=total;$("kDone").textContent=done;$("kDoing").textContent=doing;$("kLate").textContent=late;$("kSoon").textContent=soon;$("kEmergent").textContent=emergent;$("kRate").textContent=(total?Math.round(done/total*100):0)+"% tỷ lệ hoàn thành";
+    $("sideStats").textContent=`${new Set(DATA.map(x=>x.owner)).size} cán bộ · ${DATA.length} nhiệm vụ`;
+    renderChart();renderPriority();renderAlerts();renderPersons();renderStaffCards();renderStaffAttention();renderTimeline();renderWeeklyReport();renderMonthSummary();renderMonthComparison();renderTable();
+  }
+
+  function renderChart(){
+    const canvas=$("statusChart"),ctx=canvas.getContext("2d"),dpr=window.devicePixelRatio||1,w=canvas.clientWidth,h=canvas.clientHeight;
+    canvas.width=w*dpr;canvas.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
+    const keys=["Trước hạn","Đúng hạn","Đang triển khai","Quá hạn","Chưa cập nhật"],countMap=Object.fromEntries(keys.map(k=>[k,0]));
+    for(const x of filtered)if(countMap[x.status]!==undefined)countMap[x.status]++;
+    const vals=keys.map(k=>countMap[k]),max=Math.max(1,...vals),pad={l:38,r:16,t:20,b:54},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b,barW=Math.min(56,cw/keys.length*.58),gap=cw/keys.length;
+    chartHitboxes=[];ctx.strokeStyle="#e5eaf2";ctx.fillStyle="#667085";ctx.font="11px Segoe UI";
+    for(let i=0;i<=4;i++){let y=pad.t+ch-i*ch/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(Math.round(max*i/4),5,y+4)}
+    vals.forEach((v,i)=>{let bh=v/max*ch,x=pad.l+i*gap+(gap-barW)/2,y=pad.t+ch-bh;chartHitboxes.push({x:x-10,y:Math.min(y-24,pad.t),w:barW+20,h:ch+(pad.t+ch-Math.min(y-24,pad.t)),status:keys[i],value:v});ctx.fillStyle=colors[keys[i]];roundRect(ctx,x,y,barW,bh,7);ctx.fill();ctx.fillStyle="#344054";ctx.font="bold 12px Segoe UI";ctx.textAlign="center";ctx.fillText(v,x+barW/2,y-7);ctx.font="10px Segoe UI";ctx.fillStyle="#667085";wrapLabel(ctx,keys[i],x+barW/2,pad.t+ch+17,70)});ctx.textAlign="left";
+  } 
+
+  function roundRect(ctx,x,y,w,h,r){r=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+  function wrapLabel(ctx,text,x,y,max){let words=text.split(" "),line="",yy=y;words.forEach(word=>{let t=line?line+" "+word:word;if(ctx.measureText(t).width>max&&line){ctx.fillText(line,x,yy);line=word;yy+=12}else line=t});ctx.fillText(line,x,yy)}
+  function alertHTML(x){const u=urgencyInfo(x);return `<div class="alert-row"><div><div class="alert-owner">${esc(x.owner)}</div><div class="muted" style="font-size:10px">${formatDate(x.due)}</div></div><div class="alert-task" title="${esc(x.task)}">${esc(x.task.length>95?x.task.slice(0,95)+"…":x.task)}</div><span class="urgency ${u.cls}">${u.label}</span></div>`}
+
+  function startOfWeek(value){const d=value instanceof Date?new Date(value):parseDate(value);const base=d&&!isNaN(d)?d:new Date();base.setHours(0,0,0,0);const day=base.getDay()||7;base.setDate(base.getDate()-day+1);return base}
+  function toISODate(d){const x=new Date(d);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`}
+  function getSelectedWeek(){const input=$("weekDate");const selected=input&&input.value?parseDate(input.value):new Date();const start=startOfWeek(selected),end=new Date(start);end.setDate(start.getDate()+6);end.setHours(23,59,59,999);return {start,end}}
+  function setCurrentWeek(){const d=new Date();$("weekDate").value=toISODate(d);renderWeeklyReport();document.getElementById("weekly-report")?.scrollIntoView({behavior:"smooth",block:"start"})}
+  function changeWeek(days){const input=$("weekDate"),d=parseDate(input.value)||new Date();d.setDate(d.getDate()+days);input.value=toISODate(d);renderWeeklyReport()}
+
+  function renderWeeklyReport(){
+    if(!$("weekDate"))return;
+    if(!$("weekDate").value)$("weekDate").value=toISODate(new Date());
+    const {start,end}=getSelectedWeek();
+    const weekData=filtered.filter(x=>{const d=x._dueDate||parseDate(x.due);return d&&d>=start&&d<=end}).sort((a,b)=>(a._dueTime??Infinity)-(b._dueTime??Infinity));
+    const done=weekData.filter(x=>completedStatuses.has(x.status)).length;
+    const doing=weekData.filter(x=>!completedStatuses.has(x.status)&&urgencyInfo(x).key!=="overdue").length;
+    const late=weekData.filter(x=>urgencyInfo(x).key==="overdue").length;
+    const emergent=weekData.filter(x=>x.emergent).length;
+    $("weekTitle").textContent=`Tuần ${formatDate(start)} – ${formatDate(end)}`;
+    $("weekRange").textContent="Tính theo hạn hoàn thành từ thứ Hai đến Chủ nhật";
+    $("weekDataNote").textContent=weekData.length?"Dữ liệu theo bộ lọc hiện tại":"Không có nhiệm vụ có hạn trong tuần này";
+    $("wTotal").textContent=weekData.length;$("wDone").textContent=done;$("wDoing").textContent=doing;$("wLate").textContent=late;$("wEmergent").textContent=emergent;$("wRate").textContent=(weekData.length?Math.round(done/weekData.length*100):0)+"%";
+    $("weekResultCount").textContent=`${weekData.length} nhiệm vụ`;
+    $("weekTaskBody").innerHTML=weekData.map((x,i)=>`<tr><td>${i+1}</td><td><div class="owner">${esc(x.owner)}</div><div class="muted">${esc(x.position||"")}</div></td><td class="task-cell">${esc(x.task)}${x.product?`<div class="muted" style="margin-top:4px"><b>Sản phẩm:</b> ${esc(x.product)}</div>`:""}</td><td>${formatDate(x.due)}</td><td>${badge(x.status)}</td></tr>`).join("")||'<tr><td colspan="5"><div class="empty">Không có nhiệm vụ có hạn hoàn thành trong tuần được chọn</div></td></tr>';
+    const groups=groupStaff(weekData);
+    $("weekStaffProgress").innerHTML=Object.entries(groups).sort((a,b)=>b[1].total-a[1].total).map(([name,v])=>{const rate=v.total?Math.round(v.done/v.total*100):0;return `<div class="week-progress-row"><div class="person-name" title="${esc(name)}">${esc(name)}</div><div class="track"><div class="fill" style="width:${rate}%"></div></div><b>${v.done}/${v.total}</b></div>`}).join("")||'<div class="empty">Không có dữ liệu cán bộ trong tuần</div>';
+  }
+
+  function renderPriority(){const rows=filtered.filter(x=>!completedStatuses.has(x.status)&&parseDate(x.due)).sort((a,b)=>parseDate(a.due)-parseDate(b.due)).slice(0,6);$("priorityList").innerHTML=rows.map(alertHTML).join("")||'<div class="empty">Không có việc cần ưu tiên</div>'}
+  function renderAlerts(){const overdue=filtered.filter(x=>urgencyInfo(x).key==="overdue").sort((a,b)=>parseDate(a.due)-parseDate(b.due)),today=filtered.filter(x=>urgencyInfo(x).key==="today"),soon=filtered.filter(x=>urgencyInfo(x).key==="soon3").sort((a,b)=>parseDate(a.due)-parseDate(b.due));[["overdue",overdue],["today",today],["soon",soon]].forEach(([id,arr])=>{$(id+"Count").textContent=arr.length;$(id+"List").innerHTML=arr.slice(0,5).map(alertHTML).join("")||'<div class="empty">Không có nhiệm vụ</div>'})}
+  
+  function groupStaff(data=filtered){const g={};data.forEach(x=>{g[x.owner]??={total:0,done:0,late:0,doing:0};g[x.owner].total++;if(completedStatuses.has(x.status))g[x.owner].done++;if(urgencyInfo(x).key==="overdue")g[x.owner].late++;if(x.status==="Đang triển khai")g[x.owner].doing++});return g}
+  function renderPersons(){const groups=groupStaff();$("personProgress").innerHTML=Object.entries(groups).sort((a,b)=>(b[1].done/b[1].total)-(a[1].done/a[1].total)).map(([n,v])=>{let p=Math.round(v.done/v.total*100);return `<div class="person-row" data-drill="staff-all" data-drill-owner="${esc(n)}" title="Bấm để xem nhiệm vụ của ${esc(n)}"><div class="person-name" title="${esc(n)}">${esc(n)}</div><div class="track"><div class="fill" style="width:${p}%"></div></div><b class="clickable-number">${p}%</b></div>`}).join("")||'<div class="empty">Không có dữ liệu</div>'}
+  function renderStaffCards(){const groups=groupStaff();$("staffCards").innerHTML=Object.entries(groups).sort((a,b)=>b[1].total-a[1].total).map(([n,v])=>`<div class="staff-card"><h4 data-drill="staff-all" data-drill-owner="${esc(n)}">${esc(n)}</h4><div class="staff-stats"><div class="mini-stat" data-drill="staff-all" data-drill-owner="${esc(n)}"><b class="clickable-number">${v.total}</b><span>Tổng việc</span></div><div class="mini-stat" data-drill="staff-done" data-drill-owner="${esc(n)}"><b class="clickable-number">${v.done}</b><span>Hoàn thành</span></div><div class="mini-stat" data-drill="staff-late" data-drill-owner="${esc(n)}"><b class="clickable-number">${v.late}</b><span>Quá hạn</span></div></div></div>`).join("")}
+  function renderStaffAttention(){const groups=groupStaff();const rows=Object.entries(groups).sort((a,b)=>b[1].late-a[1].late).slice(0,6);$("staffAttention").innerHTML=rows.map(([n,v])=>`<div class="alert-row" data-owner="${esc(n)}"><div class="alert-owner">${esc(n)}</div><div class="alert-task">${v.done}/${v.total} nhiệm vụ đã hoàn thành</div><span class="urgency ${v.late?'u-overdue':'u-safe'}">${v.late} quá hạn</span></div>`).join("")||'<div class="empty">Không có dữ liệu</div>'}
+  
+  function filterOwner(name){$("owner").value=name;applyFilters();scrollToTasks()}
+  
+  function buildMonthOptions(){
+    const now=new Date(),currentKey=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
+    const months=[...new Set(DATA.map(x=>parseDate(x.due)).filter(Boolean).map(d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`))].filter(m=>m<=currentKey).sort().reverse();
+    const cur=$("monthSelect").value;
+    $("monthSelect").innerHTML=months.map(m=>`<option value="${m}">Tháng ${m.slice(5,7)}/${m.slice(0,4)}</option>`).join("")||'<option value="">Chưa có dữ liệu tháng</option>';
+    if(months.includes(cur))$("monthSelect").value=cur;
+    else if(months.includes(currentKey))$("monthSelect").value=currentKey;
+    else if(months.length)$("monthSelect").value=months[0];
+  }
+
+  function renderMonthSummary(){
+    const m=$("monthSelect").value;
+    if(!m){$("monthSummary").innerHTML='<div class="card empty">Chưa có dữ liệu tháng</div>';return}
+    const monthMatch=x=>{const d=parseDate(x.due);return d&&`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`===m},rows=DATA.filter(monthMatch),specs=[{label:"Tổng nhiệm vụ",value:rows.length,type:"month-total"},{label:"Đã hoàn thành",value:rows.filter(x=>completedStatuses.has(x.status)).length,type:"month-done"},{label:"Tỷ lệ hoàn thành",value:rows.length?Math.round(rows.filter(x=>completedStatuses.has(x.status)).length/rows.length*100)+"%":"0%",type:"month-done"},{label:"Đang triển khai",value:rows.filter(x=>x.status==="Đang triển khai").length,type:"month-doing"},{label:"Quá hạn",value:rows.filter(x=>urgencyInfo(x).key==="overdue").length,type:"month-late"},{label:"Phát sinh",value:rows.filter(x=>x.emergent).length,type:"month-emergent"}];
+    $("monthSummary").innerHTML=specs.map(x=>`<div class="summary-box" data-drill="${x.type}" data-month="${m}" title="Bấm để xem nhiệm vụ"><span>${x.label}</span><b class="clickable-number">${x.value}</b></div>`).join("");
+  }
+
+  function shiftMonthKey(monthKey,offset){if(!monthKey)return"";const [y,m]=monthKey.split("-").map(Number),d=new Date(y,m-1+offset,1);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`}
+  function monthLabel(monthKey){return monthKey?`Tháng ${monthKey.slice(5,7)}/${monthKey.slice(0,4)}`:"—"}
+  
+  function getMonthComparisonData(){
+    const selected=$("monthSelect").value;
+    if(!selected)return[];
+    return [-2,-1,0].map(offset=>{
+      const key=shiftMonthKey(selected,offset),rows=DATA.filter(x=>monthKeyOf(x)===key);
+      const done=rows.filter(x=>completedStatuses.has(x.status)).length;
+      const doing=rows.filter(x=>x.status==="Đang triển khai").length;
+      const late=rows.filter(x=>x.status==="Quá hạn"||urgencyInfo(x).key==="overdue").length;
+      const emergent=rows.filter(x=>x.emergent).length;
+      return{key,label:monthLabel(key),rows,total:rows.length,done,doing,late,emergent,rate:rows.length?Math.round(done/rows.length*100):0}
+    })
+  }
+
+  function renderMonthComparison(){
+    const data=getMonthComparisonData(),body=$("monthCompareBody");
+    if(!data.length){body.innerHTML='<tr><td colspan="8" class="empty">Chưa có dữ liệu để so sánh</td></tr>';renderMonthCompareChart([]);return}
+    $("compareDataNote").textContent=`Kỳ so sánh: ${data.map(x=>x.label.replace("Tháng ","")).join(" · ")}`;
+    body.innerHTML=data.map((x,i)=>{
+      const prev=i?data[i-1].total:null,diff=prev===null?null:x.total-prev;
+      const trend=diff===null?'<span class="muted">—</span>':`<span class="compare-trend ${diff>0?"compare-up":diff<0?"compare-down":"compare-flat"}">${diff>0?"▲":diff<0?"▼":"●"} ${Math.abs(diff)}</span>`;
+      return `<tr>
+        <td><b>${x.label}</b></td>
+        <td><span class="compare-number" data-drill="compare-total" data-month="${x.key}">${x.total}</span></td>
+        <td><span class="compare-number" data-drill="compare-done" data-month="${x.key}">${x.done}</span></td>
+        <td><span class="compare-number" data-drill="compare-doing" data-month="${x.key}">${x.doing}</span></td>
+        <td><span class="compare-number" data-drill="compare-late" data-month="${x.key}">${x.late}</span></td>
+        <td><span class="compare-number" data-drill="compare-emergent" data-month="${x.key}">${x.emergent}</span></td>
+        <td><span class="compare-number" data-drill="compare-done" data-month="${x.key}">${x.rate}%</span></td>
+        <td>${trend}</td>
+      </tr>`
+    }).join("");
+    renderMonthCompareChart(data)
+  }
+
+  function renderMonthCompareChart(data=getMonthComparisonData()){
+    const canvas=$("monthCompareChart");if(!canvas)return;
+    const ctx=canvas.getContext("2d"),dpr=window.devicePixelRatio||1,w=canvas.clientWidth,h=canvas.clientHeight;
+    canvas.width=w*dpr;canvas.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);compareChartHitboxes=[];
+    if(!data.length){ctx.fillStyle="#667085";ctx.font="13px Segoe UI";ctx.textAlign="center";ctx.fillText("Chưa có dữ liệu",w/2,h/2);return}
+    const pad={l:42,r:42,t:28,b:54},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b,maxCount=Math.max(1,...data.flatMap(x=>[x.total,x.done,x.doing,x.late]));
+    ctx.strokeStyle="#e5eaf2";ctx.lineWidth=1;ctx.font="11px Segoe UI";ctx.fillStyle="#667085";ctx.textAlign="right";
+    for(let i=0;i<=4;i++){const y=pad.t+ch-i*ch/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(Math.round(maxCount*i/4),pad.l-7,y+4)}
+    const metrics=[["total","#3157d5","Tổng"],["done","#16a36a","Hoàn thành"],["doing","#12a8b4","Đang triển khai"],["late","#e5484d","Quá hạn"]];
+    const groupW=cw/data.length,barGap=4,barW=Math.min(25,(groupW-26)/metrics.length);
+    data.forEach((row,gi)=>{
+      const baseX=pad.l+gi*groupW+(groupW-(barW*metrics.length+barGap*(metrics.length-1)))/2;
+      metrics.forEach(([key,color,label],mi)=>{
+        const value=row[key],bh=value/maxCount*ch,x=baseX+mi*(barW+barGap),y=pad.t+ch-bh;
+        ctx.fillStyle=color;roundRect(ctx,x,y,barW,Math.max(bh,1),5);ctx.fill();
+        compareChartHitboxes.push({x:x-3,y:y-18,w:barW+6,h:Math.max(bh+18,22),month:row.key,type:`compare-${key}`,title:`${label} · ${row.label}`})
+      });
+      ctx.fillStyle="#475467";ctx.font="11px Segoe UI";ctx.textAlign="center";ctx.fillText(row.label.replace("Tháng ",""),pad.l+gi*groupW+groupW/2,pad.t+ch+23)
+    });
+    ctx.strokeStyle="#7c3aed";ctx.fillStyle="#7c3aed";ctx.lineWidth=2.5;ctx.beginPath();
+    data.forEach((row,i)=>{const x=pad.l+i*groupW+groupW/2,y=pad.t+ch-(row.rate/100)*ch;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});
+    ctx.stroke();
+    data.forEach((row,i)=>{const x=pad.l+i*groupW+groupW/2,y=pad.t+ch-(row.rate/100)*ch;ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();ctx.font="bold 11px Segoe UI";ctx.textAlign="center";ctx.fillText(row.rate+"%",x,y-10);compareChartHitboxes.push({x:x-11,y:y-18,w:22,h:30,month:row.key,type:"compare-done",title:`Tỷ lệ hoàn thành · ${row.label}`})});
+    ctx.textAlign="left";ctx.fillStyle="#7c3aed";ctx.font="11px Segoe UI";ctx.fillText("Tỷ lệ %",w-pad.r+5,pad.t+4)
+  }
+
+  function renderTimeline(){const groups=groupStaff(DATA);let html='<div class="timeline-head">Cán bộ</div><div class="timeline-head">Quá hạn</div><div class="timeline-head">Hôm nay</div><div class="timeline-head">1–3 ngày</div><div class="timeline-head">4–7 ngày</div><div class="timeline-head">Trên 7 ngày</div>';Object.keys(groups).sort().forEach(n=>{const rows=DATA.filter(x=>x.owner===n&&!completedStatuses.has(x.status));const counts=['overdue','today','soon3','soon7','safe'].map(k=>rows.filter(x=>urgencyInfo(x).key===k).length);html+=`<div class="timeline-owner">${esc(n)}</div>${counts.map((c,i)=>`<div class="timeline-cell" data-drill="timeline" data-drill-owner="${esc(n)}" data-urgency="${['overdue','today','soon3','soon7','safe'][i]}"><span class="timeline-count clickable-number">${c}</span></div>`).join('')}`});$("timelineGrid").innerHTML=html}
+
+  function renderTable(){
+    const size=+$("pageSize").value,pages=Math.max(1,Math.ceil(filtered.length/size));
+    if(page>pages)page=pages;
+    const rows=filtered.slice((page-1)*size,page*size);
+    $("resultCount").textContent=filtered.length+" kết quả";
+    $("taskBody").innerHTML=rows.map((x,i)=>{const u=urgencyInfo(x);return `<tr><td>${(page-1)*size+i+1}</td><td><div class="owner">${esc(x.owner)}</div><div class="muted">${esc(x.position)}</div></td><td class="task-cell">${esc(x.task)}${x.product?`<div class="muted" style="margin-top:5px"><b>Sản phẩm:</b> ${esc(x.product)}</div>`:""}</td><td>${esc(x.role||"—")}</td><td>${formatDate(x.due)}</td><td><span class="urgency ${u.cls}">${u.label}</span></td><td>${formatDate(x.completed)}</td><td>${badge(x.status)}</td><td>${x.emergent?'<span class="badge badge-blue">Có</span>':'<span class="muted">Không</span>'}</td></tr>`}).join("");
+    $("empty").style.display=rows.length?"none":"block";
+    $("pageInfo").textContent=`Trang ${page} / ${pages}`;
+    $("prevBtn").disabled=page<=1;
+    $("nextBtn").disabled=page>=pages;
+  }
+
+  function monthKeyOf(x){const d=parseDate(x.due);return d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`:""}
+
+  function getDrillSpec(el){
+    const type=el.dataset.drill,owner=el.dataset.drillOwner||"",month=el.dataset.month||$("monthSelect").value,urg=el.dataset.urgency||"";
+    const {start:weekStart,end:weekEnd}=getSelectedWeek(),weekLabel=`${formatDate(weekStart)} – ${formatDate(weekEnd)}`,inSelectedWeek=x=>{const d=x._dueDate||parseDate(x.due);return d&&d>=weekStart&&d<=weekEnd};
+    const specs={
+      "kpi-total":{title:"Tất cả nhiệm vụ trong bộ lọc",base:filtered,p:x=>true},
+      "kpi-done":{title:"Nhiệm vụ đã hoàn thành",base:filtered,p:x=>completedStatuses.has(x.status)},
+      "kpi-doing":{title:"Nhiệm vụ đang triển khai",base:filtered,p:x=>x.status==="Đang triển khai"},
+      "kpi-late":{title:"Nhiệm vụ quá hạn",base:filtered,p:x=>urgencyInfo(x).key==="overdue"},
+      "kpi-soon":{title:"Nhiệm vụ sắp đến hạn",base:filtered,p:x=>["today","soon3"].includes(urgencyInfo(x).key)},
+      "kpi-emergent":{title:"Nhiệm vụ phát sinh",base:filtered,p:x=>x.emergent},
+      "week-total":{title:`Tổng nhiệm vụ tuần ${weekLabel}`,base:filtered,p:x=>inSelectedWeek(x)},
+      "week-done":{title:`Nhiệm vụ đã hoàn thành tuần ${weekLabel}`,base:filtered,p:x=>inSelectedWeek(x)&&completedStatuses.has(x.status)},
+      "week-doing":{title:`Nhiệm vụ đang xử lý tuần ${weekLabel}`,base:filtered,p:x=>inSelectedWeek(x)&&!completedStatuses.has(x.status)&&urgencyInfo(x).key!=="overdue"},
+      "week-late":{title:`Nhiệm vụ quá hạn tuần ${weekLabel}`,base:filtered,p:x=>inSelectedWeek(x)&&urgencyInfo(x).key==="overdue"},
+      "week-emergent":{title:`Nhiệm vụ phát sinh tuần ${weekLabel}`,base:filtered,p:x=>inSelectedWeek(x)&&x.emergent},
+      "week-rate":{title:`Nhiệm vụ đã hoàn thành tuần ${weekLabel}`,base:filtered,p:x=>inSelectedWeek(x)&&completedStatuses.has(x.status)},
+      "month-total":{title:`Tổng nhiệm vụ tháng ${month.slice(5,7)}/${month.slice(0,4)}`,base:DATA,p:x=>monthKeyOf(x)===month},
+      "month-done":{title:`Nhiệm vụ đã hoàn thành tháng ${month.slice(5,7)}/${month.slice(0,4)}`,base:DATA,p:x=>monthKeyOf(x)===month&&completedStatuses.has(x.status)},
+      "month-doing":{title:`Nhiệm vụ đang triển khai tháng ${month.slice(5,7)}/${month.slice(0,4)}`,base:DATA,p:x=>monthKeyOf(x)===month&&x.status==="Đang triển khai"},
+      "month-late":{title:`Nhiệm vụ quá hạn tháng ${month.slice(5,7)}/${month.slice(0,4)}`,base:DATA,p:x=>monthKeyOf(x)===month&&urgencyInfo(x).key==="overdue"},
+      "month-emergent":{title:`Nhiệm vụ phát sinh tháng ${month.slice(5,7)}/${month.slice(0,4)}`,base:DATA,p:x=>monthKeyOf(x)===month&&x.emergent},
+      "compare-total":{title:`Tổng nhiệm vụ ${monthLabel(month)}`,base:DATA,p:x=>monthKeyOf(x)===month},
+      "compare-done":{title:`Nhiệm vụ hoàn thành ${monthLabel(month)}`,base:DATA,p:x=>monthKeyOf(x)===month&&completedStatuses.has(x.status)},
+      "compare-doing":{title:`Nhiệm vụ đang triển khai ${monthLabel(month)}`,base:DATA,p:x=>monthKeyOf(x)===month&&x.status==="Đang triển khai"},
+      "compare-late":{title:`Nhiệm vụ quá hạn ${monthLabel(month)}`,base:DATA,p:x=>monthKeyOf(x)===month&&(x.status==="Quá hạn"||urgencyInfo(x).key==="overdue")},
+      "compare-emergent":{title:`Nhiệm vụ phát sinh ${monthLabel(month)}`,base:DATA,p:x=>monthKeyOf(x)===month&&x.emergent},
+      "staff-all":{title:`Tất cả nhiệm vụ của ${owner}`,base:filtered,p:x=>x.owner===owner},
+      "staff-done":{title:`Nhiệm vụ hoàn thành của ${owner}`,base:filtered,p:x=>x.owner===owner&&completedStatuses.has(x.status)},
+      "staff-late":{title:`Nhiệm vụ quá hạn của ${owner}`,base:filtered,p:x=>x.owner===owner&&urgencyInfo(x).key==="overdue"},
+      "timeline":{title:`Nhiệm vụ của ${owner} · ${urgencyLabel(urg)}`,base:DATA,p:x=>x.owner===owner&&!completedStatuses.has(x.status)&&urgencyInfo(x).key===urg}
+    };
+    return specs[type]||null;
+  }
+
+  function urgencyLabel(k){return ({overdue:"Quá hạn",today:"Hôm nay",soon3:"Còn 1–3 ngày",soon7:"Còn 4–7 ngày",safe:"Còn trên 7 ngày"})[k]||k}
+
+  function openDrill(title,rows,predicate=null){
+    drillTitleText=title;drillRows=[...rows];drillPredicate=predicate;
+    $("drillTitle").textContent=title;$("drillSearch").value="";renderDrillRows();
+    $("drillModal").classList.add("open");$("drillModal").setAttribute("aria-hidden","false");
+    document.body.style.overflow="hidden";
+  }
+
+  function renderDrillRows(){
+    const q=$("drillSearch").value.trim().toLowerCase(),rows=drillRows.filter(x=>!q||x._search.includes(q));
+    $("drillCount").textContent=rows.length;
+    $("drillBody").innerHTML=rows.map((x,i)=>`<tr><td>${i+1}</td><td><b>${esc(x.owner)}</b><div class="muted">${esc(x.position)}</div></td><td>${esc(x.task)}${x.product?`<div class="muted"><b>Sản phẩm:</b> ${esc(x.product)}</div>`:""}</td><td>${formatDate(x.due)}</td><td>${badge(x.status)}</td><td>${x.emergent?"Có":"Không"}</td></tr>`).join("");
+    $("drillEmpty").style.display=rows.length?"none":"block";
+  }
+
+  function closeDrill(){$("drillModal").classList.remove("open");$("drillModal").setAttribute("aria-hidden","true");document.body.style.overflow=""}
+  function applyDrillToList(){filtered=[...drillRows];sortFiltered();page=1;render();closeDrill();scrollToTasks()}
+  function openChartDrill(status){openDrill(`Trạng thái: ${status}`,filtered.filter(x=>x.status===status))}
+
+  function exportCSV(){
+    const cols=["Cán bộ","Chức vụ","STT","Nhiệm vụ","Vai trò","Hạn hoàn thành","Ngày hoàn thành","Trạng thái","Phát sinh","Sản phẩm"];
+    const rows=filtered.map(x=>[x.owner,x.position,x.stt,x.task,x.role,formatDate(x.due),formatDate(x.completed),x.status,x.emergent?"Có":"Không",x.product]);
+    const csv="\uFEFF"+[cols,...rows].map(r=>r.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(",")).join("\n");
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+    a.download="bao_cao_nhiem_vu_van_phong.csv";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function scrollToTasks(){$("task-list").scrollIntoView({behavior:"smooth"})}
+  function toggleMenu(){$("sidebar").classList.toggle("open")}
+
+  // EVENT LISTENERS
+  ["search"].forEach(id=>$(id).addEventListener("input",debouncedApply));
+  ["owner","status","role","emergent","urgency"].forEach(id=>$(id).addEventListener("change",applyFilters));
+  setupDateInput("dateFrom"); setupDateInput("dateTo");
+  $("sortDue").addEventListener("change",()=>{sortFiltered();page=1;renderTable()});
+  $("monthSelect").addEventListener("change",()=>{renderMonthSummary();renderMonthComparison()});
+  $("weekDate").addEventListener("change",renderWeeklyReport);
+  $("pageSize").addEventListener("change",()=>{page=1;renderTable()});
+  $("prevBtn").onclick=()=>{if(page>1){page--;renderTable()}};
+  $("nextBtn").onclick=()=>{page++;renderTable()};
+
+  let resizeTimer;
+  window.addEventListener("resize",()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{renderChart();renderMonthCompareChart()},120)});
+  
+  document.addEventListener("click",e=>{
+    const drill=e.target.closest("[data-drill]");
+    if(drill){
+      e.preventDefault();e.stopPropagation();
+      const spec=getDrillSpec(drill);
+      if(spec)openDrill(spec.title,spec.base.filter(spec.p),spec.p);
+      return;
+    }
+    const target=e.target.closest("[data-owner]");
+    if(target)filterOwner(target.dataset.owner);
+  });
+
+  $("statusChart").addEventListener("click",e=>{
+    const r=$("statusChart").getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,hit=chartHitboxes.find(h=>x>=h.x&&x<=h.x+h.w&&y>=h.y&&y<=h.y+h.h);
+    if(hit)openChartDrill(hit.status);
+  });
+
+  $("monthCompareChart").addEventListener("click",e=>{
+    const r=$("monthCompareChart").getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,hit=compareChartHitboxes.find(h=>x>=h.x&&x<=h.x+h.w&&y>=h.y&&y<=h.y+h.h);
+    if(!hit)return;
+    const fake=document.createElement("span");
+    fake.dataset.drill=hit.type; fake.dataset.month=hit.month;
+    const spec=getDrillSpec(fake);
+    if(spec)openDrill(spec.title,spec.base.filter(spec.p),spec.p);
+  });
+
+  $("drillSearch").addEventListener("input",renderDrillRows);
+  $("drillCloseBtn").addEventListener("click",closeDrill);
+  $("drillApplyBtn").addEventListener("click",applyDrillToList);
+  $("drillModal").addEventListener("click",e=>{if(e.target===$("drillModal"))closeDrill()});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("drillModal").classList.contains("open"))closeDrill()});
+
+  document.querySelectorAll('.nav-item[data-target]').forEach(item=>item.addEventListener('click',e=>{
+    e.preventDefault();
+    const target=$(item.dataset.target);
+    if(target){
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+      document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+      item.classList.add('active');
+      history.replaceState(null,'','#'+item.dataset.target);
+      $("sidebar").classList.remove("open");
+    }
+  }));
+
+  // KHỞI CHẠY LẦN ĐẦU & TỰ ĐỘNG LÀM MỚI MỖI 30 GIÂY
+  render();
+  loadData();
+  setInterval(loadData, 30000);
+</script>
+</body>
+</html>
