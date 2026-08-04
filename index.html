@@ -301,6 +301,12 @@
   function normalizeTask(x, i){
     const due = String(x.due ?? "").trim();
     const completed = String(x.completed ?? "").trim();
+    const taskText = String(x.task ?? x.nhiemVu ?? x["Nhiệm vụ"] ?? "").trim();
+
+    // BỘ LỌC RÁC: Trả về null nếu là con số hoặc chuỗi quá ngắn
+    if (!taskText || !isNaN(taskText) || taskText.length < 10) {
+      return null;
+    }
     const obj = {
       id: x.id,
       owner: String(x.owner ?? x.sheet_name ?? "Chưa xác định").trim(),
@@ -352,7 +358,7 @@
       
       if(!Array.isArray(raw)) throw new Error("Dữ liệu trả về không phải là mảng danh sách");
 
-      DATA = raw.map(normalizeTask);
+      DATA = raw.map(normalizeTask).filter(Boolean);
       localStorage.setItem("vp_tasks_supabase_cache", JSON.stringify(DATA));
       
       rebuildFilters();
